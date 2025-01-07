@@ -1,0 +1,11 @@
+target/
+
+### IntelliJ IDEA ###
+.idea/
+.gigaide/
+*.iws
+*.iml
+*.ipr
+
+### Mac OS ###
+.DS_Store
