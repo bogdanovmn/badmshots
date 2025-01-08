@@ -5,26 +5,28 @@ import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 
-import java.util.Map;
+import java.util.List;
 
 @Value
 @Builder
 public class VideoStorageOverview {
     long totalVideos;
     @Singular("player")
-    Map<String, PlayerOverview> playerOverview;
+    List<PlayerOverview> playerOverview;
     @Singular("type")
-    Map<String, TypeOverview> typeOverview;
+    List<TypeOverview> typeOverview;
 
     @Value
     @Builder
     static public class PlayerOverview {
+        String name;
         long totalVideos;
     }
 
     @Value
     @Builder
     static public class TypeOverview {
+        String type;
         long totalVideos;
     }
 }

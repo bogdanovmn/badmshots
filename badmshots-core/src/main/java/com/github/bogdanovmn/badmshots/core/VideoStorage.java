@@ -6,21 +6,21 @@ import com.github.bogdanovmn.common.files.Directory;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.util.List;
-
-import static java.util.stream.Collectors.toMap;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class VideoStorage {
     private final String path;
-    private List<VideoFile> videos;
+    private Set<VideoFile> videos;
 
     private synchronized void init() throws IOException {
         if (videos == null) {
             videos = new Directory(path)
                 .filesWithExtRecursively("mp4").stream()
                     .map(VideoFile::new)
-                    .toList();
+                    .collect(Collectors.toSet());
         }
     }
     public VideoStorageOverview overview() throws IOException {
@@ -30,18 +30,20 @@ public class VideoStorage {
 
         StringCounter playerCounter = new StringCounter();
         for (VideoFile video : videos) {
-            video.players().forEach(playerCounter::increment);
+            if (video.isNormalGame()) {
+                video.players().forEach(playerCounter::increment);
+            }
         }
 
         return result.playerOverview(
             playerCounter.keys().stream()
-                .collect(
-                    toMap(
-                        k -> k,
-                        k -> PlayerOverview.builder().totalVideos(playerCounter.get(k)).build()
-                    )
-                )
-            )
-        .build();
+            .map(
+                playerName -> PlayerOverview.builder()
+                    .name(playerName)
+                    .totalVideos(playerCounter.get(playerName))
+                .build()
+            ).sorted(Comparator.comparingLong(PlayerOverview::getTotalVideos))
+                .collect(Collectors.toList())
+        ).build();
     }
 }

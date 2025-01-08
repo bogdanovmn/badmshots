@@ -21,10 +21,10 @@ public class App {
             .withEntryPoint(options -> {
                 if (options.has(OPT_OVERVIEW)) {
                     VideoStorageOverview overview = new VideoStorage(options.get(OPT_STORAGE_DIR)).overview();
-                    System.out.printf("Storage '%s' overview: %d videos", OPT_STORAGE_DIR, overview.getTotalVideos());
+                    System.out.printf("Storage '%s' overview: %d videos\n", OPT_STORAGE_DIR, overview.getTotalVideos());
                     System.out.println("Player's statistic:");
                     overview.getPlayerOverview().forEach(
-                        (name, statistic) -> System.out.printf("  %s: %d\n", name, statistic.getTotalVideos())
+                        player -> System.out.printf("  %s: %d\n", player.getName(), player.getTotalVideos())
                     );
                 }
             }).run(args);
